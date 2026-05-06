@@ -186,10 +186,19 @@ const MesherySettingsEnvButtons = () => {
       }
 
       try {
+        updateProgress({ showProgress: true });
         const obj = await uploadK8SConfig();
         contextsRef.current = obj;
         await showUploadedContexts(inputFileName);
         handleConfigSnackbars(obj);
+        const successCount = obj.connected_contexts.length + obj.registered_contexts.length;
+        if (successCount > 0) {
+          notify({
+            message: `${successCount} context(s) connected successfully`,
+            event_type: EVENT_TYPES.SUCCESS,
+            showInNotificationCenter: true,
+          });
+        }
       } catch (err) {
         handleError('failed to upload kubernetes config')(err);
       }
